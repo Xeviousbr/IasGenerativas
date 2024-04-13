@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface CadastroForm {
   nome: string;
@@ -9,6 +10,7 @@ interface CadastroForm {
 }
 
 const Cadastro: React.FC = () => {
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState<CadastroForm>({
     nome: '',
     url: '',
@@ -136,6 +138,7 @@ const Cadastro: React.FC = () => {
       </label>
       <br />
       <button type="submit">Enviar</button>
+      <button type="button" onClick={() => navigate('/')}>Voltar</button>
     </form>
   );
 };
