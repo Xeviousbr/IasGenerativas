@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface CadastroForm {
   nome: string;
@@ -52,13 +53,29 @@ const Cadastro: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log(formData);
-      // Aqui você pode adicionar a lógica para enviar os dados para um servidor, por exemplo
+      try {
+        // Substitua 'http://localhost:5000/cadastros' pela URL e endpoint correto do seu servidor
+        const response = await axios.post('http://localhost:3001/cadastros', formData);
+        console.log('Dados enviados com sucesso:', response.data);
+        alert('Cadastro realizado com sucesso!');
+        navigate('/'); // Redirecionar após o envio bem-sucedido
+      } catch (error) {
+        console.error('Erro ao enviar os dados:', error);
+        alert('Falha ao enviar os dados.');
+      }
     }
-  };
+  };  
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (validateForm()) {
+  //     console.log(formData);
+  //     // Aqui você pode adicionar a lógica para enviar os dados para um servidor, por exemplo
+  //   }
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
