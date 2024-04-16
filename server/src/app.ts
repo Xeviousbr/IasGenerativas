@@ -1,15 +1,18 @@
 import express, { Express, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import cors from 'cors';
+
 require('dotenv').config();
 
 const app: Express = express();
-const port = process.env.PORT || 3001; // Use uma porta diferente do cliente React
+const port = process.env.PORT || 3001; 
 
 const password = '3mEERBRtS8OEjnBb';
 const dbName = 'iasgenerativas';
 const conexaostring = `mongodb+srv://xeviousbr:${password}@cluster0.f8vaska.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`;
 
+app.use(cors());
 app.use(bodyParser.json());
 
 // Conectar ao MongoDB
@@ -20,11 +23,6 @@ mongoose.connect(conexaostring, {
     console.error('Erro ao conectar ao MongoDB:', err);
   });
   
-// mongoose.connect('mongodb://localhost:27017/nomeDoBanco', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-
 // Modelo para Cadastro
 const CadastroSchema = new mongoose.Schema({
   nome: String,
@@ -37,6 +35,7 @@ const CadastroSchema = new mongoose.Schema({
 const Cadastro = mongoose.model('Cadastro', CadastroSchema);
 
 app.post('/cadastros', async (req: Request, res: Response) => {
+    console.log('Requisição recebida');
     try {
       const novoCadastro = new Cadastro(req.body);
       await novoCadastro.save();
