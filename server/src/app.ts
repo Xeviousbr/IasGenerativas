@@ -35,7 +35,7 @@ const CadastroSchema = new mongoose.Schema({
 const Cadastro = mongoose.model('Cadastro', CadastroSchema);
 
 app.post('/cadastros', async (req: Request, res: Response) => {
-    console.log('Requisição recebida');
+    console.log('Inserção de registro');
     try {
       const novoCadastro = new Cadastro(req.body);
       await novoCadastro.save();
@@ -55,4 +55,15 @@ app.get('/', (req: Request, res: Response) => {
 
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
+});
+
+// Rota para buscar todos os cadastros
+app.get('/cadastros', async (req: Request, res: Response) => {
+  console.log('Obtendo dados');
+  try {
+      const cadastros = await Cadastro.find(); // Buscar todos os documentos
+      res.status(200).json(cadastros);
+  } catch (error) {
+      res.status(500).json({ message: 'Erro ao buscar dados', error });
+  }
 });

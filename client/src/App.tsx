@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Cadastro from './Cadastro.tsx'; 
+import ItemList from './ItemList.tsx';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const HomePage: React.FC = () => {
     <div>
       <h1>Catalogo de IAs Generativas</h1>
       <button onClick={() => navigate('/cadastro')}>Ir para Cadastro</button>
+      <ItemList />
     </div>
   );
 };
