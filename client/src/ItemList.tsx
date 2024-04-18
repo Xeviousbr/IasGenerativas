@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './layout.css';
 
 interface Item {
   _id: string;
@@ -28,14 +29,15 @@ const ItemList = () => {
   }, []);
 
   return (
-    <div>
-      <ul>
-        {items.map(item => (
-          <li key={item._id}>
-            Nome: {item.nome}, URL: {item.url}, Categoria: {item.categoria}
-          </li>
-        ))}
-      </ul>
+    <div className="listagem">
+      {items.map(item => (
+        <div className="listagem-item" key={item._id}>
+          <div>Nome: {item.nome}</div>
+          <div>URL: {item.url}</div>
+          <div>Categoria: {item.categoria}</div>
+          <button className="edit-button" onClick={() => handleEdit(item.id)}>Editar</button>
+        </div>
+      ))}
     </div>
   );
 };

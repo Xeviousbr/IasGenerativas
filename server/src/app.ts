@@ -16,12 +16,15 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Conectar ao MongoDB
-mongoose.connect(conexaostring, {
-  }).then(() => {
-    console.log('Conexão com o MongoDB estabelecida com sucesso.');
-  }).catch(err => {
-    console.error('Erro ao conectar ao MongoDB:', err);
-  });
+mongoose.connect(conexaostring).then(() => {
+  console.log('Conexão com o MongoDB estabelecida com sucesso.');
+}).catch(err => {
+  if (err instanceof mongoose.Error.MongooseServerSelectionError) {
+      console.error('Falha ao conectar ao MongoDB: Verifique se seu IP está na lista de permitidos no Atlas e se o cluster está acessível.');
+  } else {
+      console.error('Erro ao conectar ao MongoDB:', err);
+  }
+});
   
 // Modelo para Cadastro
 const CadastroSchema = new mongoose.Schema({
