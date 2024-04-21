@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 interface CadastroForm {
@@ -11,7 +11,8 @@ interface CadastroForm {
 }
 
 const Cadastro: React.FC = () => {
-  const navigate = useNavigate(); 
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<CadastroForm>({
     nome: '',
     url: '',
@@ -25,17 +26,31 @@ const Cadastro: React.FC = () => {
     categoria: '',
   });
 
+  useEffect(() => {
+    if (id && id !== "0") {
+      axios.get(`http://localhost:3001/cadastros/${id}`)
+        .then(response => {
+          setFormData({
+            nome: response.data.nome,
+            url: response.data.url,
+            categoria: response.data.categoria,
+            descricao: response.data.descricao,
+            free: response.data.free
+          });
+        })
+        .catch(error => console.error('Erro ao buscar dados para edição:', error));
+    }
+  }, [id]);
+
   const validateForm = () => {
     let isValid = true;
     const newErrors = { nome: '', url: '', categoria: '' };
 
-    // Validação do nome
     if (formData.nome.length < 3) {
       newErrors.nome = 'O nome deve ter pelo menos 3 caracteres.';
       isValid = false;
     }
 
-    // Validação da URL
     try {
       new URL(formData.url);
     } catch (_) {
@@ -43,7 +58,6 @@ const Cadastro: React.FC = () => {
       isValid = false;
     }
 
-    // Validação da categoria
     if (!formData.categoria) {
       newErrors.categoria = 'Selecione uma categoria.';
       isValid = false;
@@ -57,25 +71,18 @@ const Cadastro: React.FC = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        // Substitua 'http://localhost:5000/cadastros' pela URL e endpoint correto do seu servidor
-        const response = await axios.post('http://localhost:3001/cadastros', formData);
+        const method = id && id !== "0" ? 'put' : 'post';
+        const url = `http://localhost:3001/cadastros${id ? `/${id}` : ''}`;
+        const response = await axios[method](url, formData);
         console.log('Dados enviados com sucesso:', response.data);
         alert('Cadastro realizado com sucesso!');
-        navigate('/'); // Redirecionar após o envio bem-sucedido
+        navigate('/');
       } catch (error) {
         console.error('Erro ao enviar os dados:', error);
         alert('Falha ao enviar os dados.');
       }
     }
-  };  
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (validateForm()) {
-  //     console.log(formData);
-  //     // Aqui você pode adicionar a lógica para enviar os dados para um servidor, por exemplo
-  //   }
-  // };
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -154,7 +161,16 @@ const Cadastro: React.FC = () => {
         />
       </label>
       <br />
-      <button type="submit">Enviar</button>
+      <button type="submit">Salvar</button>
+
+      {/* onClick={handleDelete} */}
+
+      {id && (
+        <button type="button" style={{ backgroundColor: 'red', marginLeft: '10px' }}>
+          Excluir
+        </button>
+      )}
+
       <button type="button" onClick={() => navigate('/')}>Voltar</button>
     </form>
   );

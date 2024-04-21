@@ -14,8 +14,11 @@ const conexaostring = `mongodb+srv://xeviousbr:${password}@cluster0.f8vaska.mong
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  next();
+});
 
-// Conectar ao MongoDB
 mongoose.connect(conexaostring).then(() => {
   console.log('Conexão com o MongoDB estabelecida com sucesso.');
 }).catch(err => {
@@ -26,7 +29,6 @@ mongoose.connect(conexaostring).then(() => {
   }
 });
   
-// Modelo para Cadastro
 const CadastroSchema = new mongoose.Schema({
   nome: String,
   url: String,
@@ -38,7 +40,7 @@ const CadastroSchema = new mongoose.Schema({
 const Cadastro = mongoose.model('Cadastro', CadastroSchema);
 
 app.post('/cadastros', async (req: Request, res: Response) => {
-    console.log('Inserção de registro');
+    console.log('Dados recebidos:', req.body);
     try {
       const novoCadastro = new Cadastro(req.body);
       await novoCadastro.save();
@@ -60,13 +62,24 @@ app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
 
-// Rota para buscar todos os cadastros
 app.get('/cadastros', async (req: Request, res: Response) => {
   console.log('Obtendo dados');
   try {
-      const cadastros = await Cadastro.find(); // Buscar todos os documentos
+      const cadastros = await Cadastro.find(); 
       res.status(200).json(cadastros);
   } catch (error) {
       res.status(500).json({ message: 'Erro ao buscar dados', error });
+  }
+});
+
+app.get('/cadastros/:id', async (req, res) => {
+  try {
+      const cadastro = await Cadastro.findById(req.params.id);
+      if (!cadastro) {
+          return res.status(404).send('Cadastro não encontrado');
+      }
+      res.send(cadastro);
+  } catch (error) {
+      res.status(500).send('Erro ao buscar o cadastro');
   }
 });
