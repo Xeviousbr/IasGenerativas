@@ -83,7 +83,7 @@ const Cadastro: React.FC = () => {
       }
     }
   };
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === 'checkbox';
@@ -100,6 +100,19 @@ const Cadastro: React.FC = () => {
       }));
     }
   };
+
+  const handleDelete = async () => {
+    if (window.confirm('Tem certeza que deseja excluir este cadastro?')) {
+      try {
+        await axios.delete(`http://localhost:3001/cadastros/${id}`);
+        alert('Cadastro excluído com sucesso!');
+        navigate('/');
+      } catch (error) {
+        console.error('Erro ao excluir o cadastro:', error);
+        alert('Falha ao excluir o cadastro.');
+      }
+    }
+  };  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -163,10 +176,8 @@ const Cadastro: React.FC = () => {
       <br />
       <button type="submit">Salvar</button>
 
-      {/* onClick={handleDelete} */}
-
       {id && (
-        <button type="button" style={{ backgroundColor: 'red', marginLeft: '10px' }}>
+        <button type="button" onClick={handleDelete} style={{ backgroundColor: 'red', marginLeft: '10px' }}>
           Excluir
         </button>
       )}

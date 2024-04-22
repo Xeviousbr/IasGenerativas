@@ -83,3 +83,33 @@ app.get('/cadastros/:id', async (req, res) => {
       res.status(500).send('Erro ao buscar o cadastro');
   }
 });
+
+app.delete('/cadastros/:id', async (req: Request, res: Response) => {
+  try {
+    const resultado = await Cadastro.findByIdAndDelete(req.params.id);
+    if (!resultado) {
+      return res.status(404).send('Cadastro não encontrado');
+    }
+    res.send('Cadastro excluído com sucesso');
+  } catch (error) {
+    console.error('Erro ao excluir o cadastro:', error);
+    res.status(500).send('Erro ao excluir o cadastro');
+  }
+});
+
+app.put('/cadastros/:id', async (req: Request, res: Response) => {
+  console.log('Ação de edição');
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const options = { new: true }; 
+    const resultado = await Cadastro.findByIdAndUpdate(id, updateData, options);
+    if (!resultado) {
+      return res.status(404).send('Cadastro não encontrado');
+    }
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error('Erro ao atualizar o cadastro:', error);
+    res.status(500).send('Erro ao atualizar o cadastro');
+  }
+});
