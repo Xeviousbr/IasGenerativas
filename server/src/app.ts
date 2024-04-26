@@ -8,7 +8,7 @@ require('dotenv').config();
 const app: Express = express();
 const port = process.env.PORT || 3001; 
 
-const password = '3mEERBRtS8OEjnBb';
+const password = 'UMASENHA';
 const dbName = 'iasgenerativas';
 const conexaostring = `mongodb+srv://xeviousbr:${password}@cluster0.f8vaska.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`;
 
